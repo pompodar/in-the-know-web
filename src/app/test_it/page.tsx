@@ -1,5 +1,7 @@
 'use client';
 import React, { useState, useEffect } from "react";
+import { CSSProperties } from "react";
+
 
 const imagesApiUrl = "https://in-the-know.blobsandtrees.online/wp-json/wp/v2/media";
 
@@ -79,7 +81,11 @@ const TestIt: React.FC = () => {
         setShowAnswer(true);
     };
 
-    const styles = {
+    interface Styles {
+        [key: string]: CSSProperties;
+    }
+
+    const styles: Styles = {
         container: {
             display: "flex",
             justifyContent: "center",

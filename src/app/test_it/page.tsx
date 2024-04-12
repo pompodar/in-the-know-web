@@ -26,9 +26,11 @@ const TestIt: React.FC = () => {
     useEffect(() => {
         fetch(imagesApiUrl)
             .then((response) => response.json())
-            .then((data: Image[]) => {
-                const imageUrls = data.map((item: Image) => ({ uri: item.uri }));
+            .then((data: any) => {
+                const imageUrls = data.map((item: any) => ({ uri: item.link }));
                 setImages(imageUrls);
+                console.log(data);
+                
             })
             .catch((error) => {
                 console.error("Error fetching images:", error);

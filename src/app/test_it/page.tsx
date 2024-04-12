@@ -3,19 +3,29 @@ import React, { useState, useEffect } from "react";
 
 const imagesApiUrl = "https://in-the-know.blobsandtrees.online/wp-json/wp/v2/media";
 
-const TestIt = () => {
-    const [showAnswer, setShowAnswer] = useState(false);
-    const [questions, setQuestions] = useState([]);
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const [randomImageIndex, setRandomImageIndex] = useState(0);
-    const [images, setImages] = useState([]);
-    const [numberOfCurrentQuestion, setNumberOfCurrentQuestion] = useState(1);
+interface Image {
+    uri: string;
+}
+
+interface Question {
+    question: string;
+    answer: string;
+    featured_media?: Image;
+}
+
+const TestIt: React.FC = () => {
+    const [showAnswer, setShowAnswer] = useState<boolean>(false);
+    const [questions, setQuestions] = useState<Question[]>([]);
+    const [currentIndex, setCurrentIndex] = useState<number>(0);
+    const [randomImageIndex, setRandomImageIndex] = useState<number>(0);
+    const [images, setImages] = useState<Image[]>([]);
+    const [numberOfCurrentQuestion, setNumberOfCurrentQuestion] = useState<number>(1);
 
     useEffect(() => {
         fetch(imagesApiUrl)
             .then((response) => response.json())
-            .then((data) => {
-                const imageUrls = data.map((item) => ({ uri: item.source_url }));
+            .then((data: Image[]) => {
+                const imageUrls = data.map((item: Image) => ({ uri: item.uri }));
                 setImages(imageUrls);
             })
             .catch((error) => {
@@ -24,8 +34,8 @@ const TestIt = () => {
 
         fetch("https://in-the-know.blobsandtrees.online/wp-json/custom/v1/question-posts")
             .then((response) => response.json())
-            .then((posts) => {
-                const filteredQuestions = posts.filter((question) => question?.question);
+            .then((posts: Question[]) => {
+                const filteredQuestions = posts.filter((question: Question) => question?.question);
                 setQuestions(shuffleArray(filteredQuestions));
             })
             .catch((error) => {
@@ -33,10 +43,10 @@ const TestIt = () => {
             });
     }, []);
 
-    const shuffleArray = (array) => {
+    const shuffleArray = <T extends unknown>(array: T[]): T[] => {
         let currentIndex = array.length,
-            temporaryValue,
-            randomIndex;
+            temporaryValue: T,
+            randomIndex: number;
 
         while (0 !== currentIndex) {
             randomIndex = Math.floor(Math.random() * currentIndex);
@@ -50,7 +60,7 @@ const TestIt = () => {
         return array;
     };
 
-    const handleGoPress = () => {
+    const handleGoPress = (): void => {
         setCurrentIndex(currentIndex + 1);
         const randomIndex = Math.floor(Math.random() * images.length);
         setRandomImageIndex(randomIndex);
@@ -65,7 +75,7 @@ const TestIt = () => {
         }
     };
 
-    const handleSeeAnswerPress = () => {
+    const handleSeeAnswerPress = (): void => {
         setShowAnswer(true);
     };
 
@@ -77,17 +87,17 @@ const TestIt = () => {
             height: "100vh",
             position: "relative",
             backgroundImage: !showAnswer
-                ? `url(${images[randomImageIndex]?.uri})` // Use the URI from the images array
+                ? `url(${images[randomImageIndex]?.uri})`
                 : questions[currentIndex]?.featured_media
-                    ? `url(${questions[currentIndex]?.featured_media?.uri})` // Use the URI from the questions array if available
-                    : `url(${images[randomImageIndex]?.uri})` // Otherwise fallback to the random image URI
+                    ? `url(${questions[currentIndex]?.featured_media?.uri})`
+                    : `url(${images[randomImageIndex]?.uri})`
         },
         grid: {
             display: "flex",
             flexDirection: "row",
             flexWrap: "wrap",
             justifyContent: "center",
-            width: 320, // Adjust width as needed
+            width: 320,
         },
         card: {
             width: 300,
@@ -131,13 +141,13 @@ const TestIt = () => {
         }
     };
 
-    const renderCard = () => {
+    const renderCard = (): JSX.Element => {
         return (
             <div style={styles.card}>
                 <p style={styles.cardText}>
                     {questions[currentIndex]?.question}
                 </p>
-                <div 
+                <div
                     style={{
                         marginTop: 20,
                     }}
